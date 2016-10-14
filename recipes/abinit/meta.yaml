@@ -13,7 +13,10 @@ build:
 
 requirements:
   build:
-    - libgfortran
+    - gcc  # [linux]
+  run:
+    - libgcc       # [osx]
+    - libgfortran  # [osx]
 
 #test:
 #  commands:
