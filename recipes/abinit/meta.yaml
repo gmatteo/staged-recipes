@@ -18,13 +18,15 @@ build:
 
 requirements:
   build:
-    - gcc 
+    #- gcc 
     - libgcc 
     - libgfortran
+    - fftw
   run:
     - gcc  
     - libgcc 
     - libgfortran 
+    - fftw
 
 #test:
 #  commands:

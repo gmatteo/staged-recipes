@@ -67,14 +67,17 @@ fi
 #export FFT_INCS=${LINALG_INCS}
 #export FFT_LIBS=${LINALG_INCS}
 
+FFT_INCS="-I$PREFIX/include"
+FFT_LIBS="-L$PREFIX/lib -lfftw3f -lfftw3"
+
+
 ./configure --prefix=${PREFIX} \
 --enable-mpi=no \
 --with-linalg-flavor=none \
---with-fft-flavor=none \
+--with-fft-flavor=fftw3 --with-fft-incs="${FFT_INCS}" --with-fft-libs="${FFT_LIBS}" \
 --with-trio-flavor=netcdf-fallback \
 --with-dft-flavor=libxc-fallback
-#--with-linalg-flavor=custom --with-linalg-incs=${LINALG_INCS} --with-linalg-libs=${LINALG_LIBS} \
-#--with-fft-flavor=fftw3 --with-linalg-incs=${FFT_INCS} --with-fft-libs=${FFT_LIBS} \
+#--with-linalg-flavor=custom --with-linalg-incs="${LINALG_INCS}" --with-linalg-libs="${LINALG_LIBS}" \
       
 make -j${CPU_COUNT}
 
