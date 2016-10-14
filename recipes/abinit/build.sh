@@ -58,7 +58,24 @@ if [[ `uname` == 'Darwin' ]]; then
     cp ~/anaconda2/lib/${LIBGCC_S_NAME}    ${PREFIX}/lib/${LIBGCC_S_NAME}
 fi
 
-./configure --prefix=${PREFIX} --enable-mpi=no --with-linalg-flavor=none --with-fft-flavor=none
+# Linux with MKL dynamically linked with GCC
+# https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor
+#export LINALG_INCS="-I${MKLROOT}/include"
+#export LINALG_LIBS="-Wl,--no-as-needed -L${MKLROOT}/lib/intel64 \
+#-lmkl_gf_lp64 -lmkl_core -lmkl_sequential -lpthread -lm -ldl"
+#FCFLAS="${FCFLAS} -m64 -I${MKLROOT}/include"
+#export FFT_INCS=${LINALG_INCS}
+#export FFT_LIBS=${LINALG_INCS}
+
+./configure --prefix=${PREFIX} \
+--enable-mpi=no \
+--with-linalg-flavor=none \
+--with-fft-flavor=none \
+--with-trio-flavor=netcdf-fallback \
+--with-dft-flavor=libxc-fallback
+#--with-linalg-flavor=custom --with-linalg-incs=${LINALG_INCS} --with-linalg-libs=${LINALG_LIBS} \
+#--with-fft-flavor=fftw3 --with-linalg-incs=${FFT_INCS} --with-fft-libs=${FFT_LIBS} \
+      
 make -j${CPU_COUNT}
 
 
