@@ -32,21 +32,31 @@ export FCFLAGS="-O0 -g -ffree-line-length-none -Wl,-rpath,${CONDA_PREFIX}/lib"
 LIBGFORTRAN_DIR=/usr/local/opt/gcc/lib/gcc/5
 LIBGFORTRAN_NAME=libgfortran.3.${DYLIB_EXT} 
 
+LIBGFORTRAN_DIR=~/anaconda2/lib
+LIBGFORTRAN_NAME=libgfortran.so.3
+
 LIBGCC_S_DIR=/usr/local/lib/gcc/5
 LIBGCC_S_NAME=libgcc_s.1.${DYLIB_EXT} 
+
+LIBGCC_S_DIR=~/anaconda2/lib
+LIBGCC_S_NAME=libgcc_s.so.1
 
 LIBQUADMATH_DIR=/usr/local/opt/gcc/lib/gcc/5
 LIBQUADMATH_NAME=libquadmath.0.${DYLIB_EXT} 
 
+LIBQUADMATH_DIR=~/anaconda2/lib
+LIBQUADMATH_NAME=libquadmath.so.0
+
 LIBGFORTRAN_PATH=${LIBGFORTRAN_DIR}/${LIBGFORTRAN_PATH}
 LIBGCC_S_PATH=${LIBGCC_S_DIR}/${LIBGCC_S_NAME}
-
 LIBQUADMATH_PATH=${LIBQUADMATH_DIR}/${LIQUADMATH_NAME}
 
-mkdir -p ${PREFIX}/lib
-cp ~/anaconda2/lib/${LIBGFORTRAN_NAME} ${PREFIX}/lib/${LIBGFORTRAN_NAME}
-cp ~/anaconda2/lib/${LIBQUADMATH_NAME} ${PREFIX}/lib/${LIBQUADMATH_NAME}
-cp ~/anaconda2/lib/${LIBGCC_S_NAME}    ${PREFIX}/lib/${LIBGCC_S_NAME}
+if [[ `uname` == 'Darwin' ]]; then
+    mkdir -p ${PREFIX}/lib
+    cp ~/anaconda2/lib/${LIBGFORTRAN_NAME} ${PREFIX}/lib/${LIBGFORTRAN_NAME}
+		cp ~/anaconda2/lib/${LIBQUADMATH_NAME} ${PREFIX}/lib/${LIBQUADMATH_NAME}
+    cp ~/anaconda2/lib/${LIBGCC_S_NAME}    ${PREFIX}/lib/${LIBGCC_S_NAME}
+fi
 
 ./configure --prefix=${PREFIX} --enable-mpi=no --with-linalg-flavor=none --with-fft-flavor=none
 make -j${CPU_COUNT}
@@ -61,10 +71,10 @@ make install-exec
 
 
 declare -a ABINIT_BINARIES=(
-"abinit" "band2eps" "cut3d" "ioprof" "mrgdv" "ujdet"
-"bsepostproc" "lapackprof" "mrggkk" "vdw_kernelgen"
-"aim" "fftprof" "macroave" "mrgscr" 
-"anaddb" "conducti" "fold2Bloch" "mrgddb" "optic"
+	"abinit" "band2eps" "cut3d" "ioprof" "mrgdv" "ujdet"
+	"bsepostproc" "lapackprof" "mrggkk" "vdw_kernelgen"
+	"aim" "fftprof" "macroave" "mrgscr" 
+	"anaddb" "conducti" "fold2Bloch" "mrgddb" "optic"
 )
 
 if [[ `uname` == 'Darwin' ]]; then
@@ -79,6 +89,7 @@ if [[ `uname` == 'Darwin' ]]; then
         #${LDD} $PREFIX/bin/${bname}
     done 
 fi 
+
 
 unset FC
 unset CC

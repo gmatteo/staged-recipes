@@ -11,12 +11,20 @@ build:
     number: '0'
     script: python setup.py install --single-version-externally-managed --record record.txt
 
+		# See https://github.com/ContinuumIO/anaconda-issues/issues/739
+    rpaths:
+      - lib/
+      - lib64/
+
 requirements:
   build:
-    - gcc  # [linux]
+    - gcc 
+    - libgcc 
+    - libgfortran
   run:
-    - libgcc       # [osx]
-    - libgfortran  # [osx]
+    - gcc  
+    - libgcc 
+    - libgfortran 
 
 #test:
 #  commands:
