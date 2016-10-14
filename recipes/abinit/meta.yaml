@@ -22,14 +22,14 @@ requirements:
     - libgcc 
     - libgfortran
     #- fftw
-    - openblas
+    #- openblas
 
   run:
     - gcc  
     - libgcc 
     - libgfortran 
     #- fftw
-    - openblas
+    #- openblas
 
 #test:
 #  commands:

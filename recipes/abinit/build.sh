@@ -74,12 +74,12 @@ LINALG_LIBS="-L$PREFIX/lib -lopenblas -lpthread"
 
 ./configure --prefix=${PREFIX} \
 --enable-mpi=no \
---with-linalg-flavor=custom --with-linalg-libs="${LINALG_LIBS}" \
+--with-linalg-flavor=none \
 --with-fft-flavor=none \
 --with-trio-flavor=netcdf-fallback \
 --with-dft-flavor=libxc-fallback
 #--with-fft-flavor=fftw3 --with-fft-incs="${FFT_INCS}" --with-fft-libs="${FFT_LIBS}" \
-#--with-linalg-flavor=none \
+#--with-linalg-flavor=custom --with-linalg-libs="${LINALG_LIBS}" \
 
       
 make -j${CPU_COUNT}
