@@ -3,15 +3,14 @@
 
 # Depending on our platform, shared libraries end with either .so or .dylib
 if [[ `uname` == 'Darwin' ]]; then
-    export DYLIB_EXT=dylib
+    # Use homebrew
     export CC=gcc-5
     export FC=gfortran-5
-    export LDD="otool -L"
+    #export CC=gcc
+    #export FC=gfortran
 else
-    export DYLIB_EXT=so
     export CC=gcc
     export FC=gfortran
-    export LDD=ldd
 fi
 
 
@@ -28,28 +27,27 @@ export FCFLAGS="-O0 -g -ffree-line-length-none -Wl,-rpath,${CONDA_PREFIX}/lib"
 # -fPIC or -fpic
 # see https://gcc.gnu.org/onlinedocs/gcc-4.8.3/gcc/Code-Gen-Options.html#Code-Gen-Options
 
-
 LIBGFORTRAN_DIR=/usr/local/opt/gcc/lib/gcc/5
-LIBGFORTRAN_NAME=libgfortran.3.${DYLIB_EXT} 
+LIBGFORTRAN_NAME=libgfortran.3.dylib
 
-LIBGFORTRAN_DIR=~/anaconda2/lib
-LIBGFORTRAN_NAME=libgfortran.so.3
+#LIBGFORTRAN_DIR=~/anaconda2/lib
+#LIBGFORTRAN_NAME=libgfortran.so.3
 
 LIBGCC_S_DIR=/usr/local/lib/gcc/5
-LIBGCC_S_NAME=libgcc_s.1.${DYLIB_EXT} 
+LIBGCC_S_NAME=libgcc_s.1.dylib 
 
-LIBGCC_S_DIR=~/anaconda2/lib
-LIBGCC_S_NAME=libgcc_s.so.1
+#LIBGCC_S_DIR=~/anaconda2/lib
+#LIBGCC_S_NAME=libgcc_s.so.1
 
 LIBQUADMATH_DIR=/usr/local/opt/gcc/lib/gcc/5
-LIBQUADMATH_NAME=libquadmath.0.${DYLIB_EXT} 
+LIBQUADMATH_NAME=libquadmath.0.dylib
 
-LIBQUADMATH_DIR=~/anaconda2/lib
-LIBQUADMATH_NAME=libquadmath.so.0
+#LIBQUADMATH_DIR=~/anaconda2/lib
+#LIBQUADMATH_NAME=libquadmath.so.0
 
-LIBGFORTRAN_PATH=${LIBGFORTRAN_DIR}/${LIBGFORTRAN_PATH}
+LIBGFORTRAN_PATH=${LIBGFORTRAN_DIR}/${LIBGFORTRAN_NAME}
 LIBGCC_S_PATH=${LIBGCC_S_DIR}/${LIBGCC_S_NAME}
-LIBQUADMATH_PATH=${LIBQUADMATH_DIR}/${LIQUADMATH_NAME}
+LIBQUADMATH_PATH=${LIBQUADMATH_DIR}/${LIBQUADMATH_NAME}
 
 if [[ `uname` == 'Darwin' ]]; then
     mkdir -p ${PREFIX}/lib
@@ -100,16 +98,17 @@ declare -a ABINIT_BINARIES=(
 	"anaddb" "conducti" "fold2Bloch" "mrgddb" "optic"
 )
 
+
 if [[ `uname` == 'Darwin' ]]; then
     for bname in "${ABINIT_BINARIES[@]}" 
     do
-        #${LDD} $PREFIX/bin/${bname}
+        otool -L $PREFIX/bin/${bname}
         install_name_tool \
           -change ${LIBGCC_S_PATH} ${CONDA_PREFIX}/lib/${LIBGCC_S_NAME} \
           -change ${LIBQUADMATH_PATH} ${CONDA_PREFIX}/lib/${LIBQUADMATH_NAME} \
-          -change ${LIBGFORTRAN_PATH} ${CONDA_PREFIX}/lib/${LIBQUADMATH_NAME} \
+          -change ${LIBGFORTRAN_PATH} ${CONDA_PREFIX}/lib/${LIBGFORTRAN_NAME} \
           $PREFIX/bin/${bname}
-        #${LDD} $PREFIX/bin/${bname}
+        otool -L $PREFIX/bin/${bname}
     done 
 fi 
 
