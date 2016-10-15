@@ -10,8 +10,7 @@ source:
 build:
     number: '0'
     script: python setup.py install --single-version-externally-managed --record record.txt
-
-		# See https://github.com/ContinuumIO/anaconda-issues/issues/739
+    # See https://github.com/ContinuumIO/anaconda-issues/issues/739
     rpaths:
       - lib/
       - lib64/
@@ -37,7 +36,6 @@ requirements:
 
 about:
     home: http://www.abinit.org/
-
     license: GPL
     #license_file: LICENSE.txt
     summary: "ABINIT is a quantum chemistry software based on the DFT (Density Functional Theory) method." 

@@ -27,23 +27,17 @@ export FCFLAGS="-O0 -g -ffree-line-length-none -Wl,-rpath,${CONDA_PREFIX}/lib"
 # -fPIC or -fpic
 # see https://gcc.gnu.org/onlinedocs/gcc-4.8.3/gcc/Code-Gen-Options.html#Code-Gen-Options
 
+#LIBGFORTRAN_DIR=~/anaconda2/lib
 LIBGFORTRAN_DIR=/usr/local/opt/gcc/lib/gcc/5
 LIBGFORTRAN_NAME=libgfortran.3.dylib
 
-#LIBGFORTRAN_DIR=~/anaconda2/lib
-#LIBGFORTRAN_NAME=libgfortran.so.3
-
+#LIBGCC_S_DIR=~/anaconda2/lib
 LIBGCC_S_DIR=/usr/local/lib/gcc/5
 LIBGCC_S_NAME=libgcc_s.1.dylib 
 
-#LIBGCC_S_DIR=~/anaconda2/lib
-#LIBGCC_S_NAME=libgcc_s.so.1
-
+#LIBQUADMATH_DIR=~/anaconda2/lib
 LIBQUADMATH_DIR=/usr/local/opt/gcc/lib/gcc/5
 LIBQUADMATH_NAME=libquadmath.0.dylib
-
-#LIBQUADMATH_DIR=~/anaconda2/lib
-#LIBQUADMATH_NAME=libquadmath.so.0
 
 LIBGFORTRAN_PATH=${LIBGFORTRAN_DIR}/${LIBGFORTRAN_NAME}
 LIBGCC_S_PATH=${LIBGCC_S_DIR}/${LIBGCC_S_NAME}
@@ -52,23 +46,26 @@ LIBQUADMATH_PATH=${LIBQUADMATH_DIR}/${LIBQUADMATH_NAME}
 if [[ `uname` == 'Darwin' ]]; then
     mkdir -p ${PREFIX}/lib
     cp ~/anaconda2/lib/${LIBGFORTRAN_NAME} ${PREFIX}/lib/${LIBGFORTRAN_NAME}
-		cp ~/anaconda2/lib/${LIBQUADMATH_NAME} ${PREFIX}/lib/${LIBQUADMATH_NAME}
+    cp ~/anaconda2/lib/${LIBQUADMATH_NAME} ${PREFIX}/lib/${LIBQUADMATH_NAME}
     cp ~/anaconda2/lib/${LIBGCC_S_NAME}    ${PREFIX}/lib/${LIBGCC_S_NAME}
 fi
 
-# Linux with MKL dynamically linked with GCC
 # https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor
+# Linux-GCC with MKL dynamically
 #export LINALG_LIBS="-Wl,--no-as-needed -L${MKLROOT}/lib/intel64 \
 #-lmkl_gf_lp64 -lmkl_core -lmkl_sequential -lpthread -lm -ldl"
 #FCFLAS="${FCFLAS} -m64 -I${MKLROOT}/include"
-#export FFT_INCS=${LINALG_INCS}
-#export FFT_LIBS=${LINALG_INCS}
+#FFT_INCS=${LINALG_INCS}
+#FFT_LIBS=${LINALG_INCS}
 
+# FFTW3
+FFT_FLAVOR="none"
 FFT_INCS="-I$PREFIX/include"
 FFT_LIBS="-L$PREFIX/lib -lfftw3f -lfftw3"
 
+# Open BLAS
+LINALG_FLAVOR="none"
 LINALG_LIBS="-L$PREFIX/lib -lopenblas -lpthread"
-
 
 ./configure --prefix=${PREFIX} \
 --enable-mpi=no \
@@ -76,20 +73,17 @@ LINALG_LIBS="-L$PREFIX/lib -lopenblas -lpthread"
 --with-fft-flavor=none \
 --with-trio-flavor=netcdf-fallback \
 --with-dft-flavor=libxc-fallback
-#--with-fft-flavor=fftw3 --with-fft-incs="${FFT_INCS}" --with-fft-libs="${FFT_LIBS}" \
-#--with-linalg-flavor=custom --with-linalg-libs="${LINALG_LIBS}" \
-
+#--with-fft-flavor="${FFT_FLAVOR} --with-fft-incs="${FFT_INCS}" --with-fft-libs="${FFT_LIBS}" \
+#--with-linalg-flavor=${LINALG_FLAVOR} --with-linalg-libs="${LINALG_LIBS}" \
       
 make -j${CPU_COUNT}
 
-
 # Test suite
-# tests are performed during building as they are not available in the
-# installed package.
+# tests are performed during building as they are not available in the installed package.
 #make check
 
+# Install binaries (don't copy test files to reduce size of the package)
 make install-exec
-
 
 declare -a ABINIT_BINARIES=(
 	"abinit" "band2eps" "cut3d" "ioprof" "mrgdv" "ujdet"
@@ -98,17 +92,16 @@ declare -a ABINIT_BINARIES=(
 	"anaddb" "conducti" "fold2Bloch" "mrgddb" "optic"
 )
 
-
 if [[ `uname` == 'Darwin' ]]; then
     for bname in "${ABINIT_BINARIES[@]}" 
     do
-        otool -L $PREFIX/bin/${bname}
+        otool -L ${PREFIX}/bin/${bname}
         install_name_tool \
           -change ${LIBGCC_S_PATH} ${CONDA_PREFIX}/lib/${LIBGCC_S_NAME} \
           -change ${LIBQUADMATH_PATH} ${CONDA_PREFIX}/lib/${LIBQUADMATH_NAME} \
           -change ${LIBGFORTRAN_PATH} ${CONDA_PREFIX}/lib/${LIBGFORTRAN_NAME} \
-          $PREFIX/bin/${bname}
-        otool -L $PREFIX/bin/${bname}
+          ${PREFIX}/bin/${bname}
+        otool -L ${PREFIX}/bin/${bname}
     done 
 fi 
 
