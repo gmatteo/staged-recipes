@@ -22,8 +22,8 @@ export LDFLAGS="$LDFLAGS -L$PREFIX/lib -Wl,-rpath,$PREFIX/lib"
 # the ld(1) -headerpad_max_install_names option.
 export FC_LDFLAGS_EXTRA="-Wl,-headerpad_max_install_names"
 
-export CFLAGS="$CFLAGS -g -O0 -fPIC -I$PREFIX/include"
-export FCFLAGS="-O0 -g -ffree-line-length-none -Wl,-rpath,${CONDA_PREFIX}/lib" 
+export CFLAGS="$CFLAGS -g -O2 -fPIC -I$PREFIX/include"
+export FCFLAGS="-O2 -g -ffree-line-length-none -Wl,-rpath,${CONDA_PREFIX}/lib" 
 # -fPIC or -fpic
 # see https://gcc.gnu.org/onlinedocs/gcc-4.8.3/gcc/Code-Gen-Options.html#Code-Gen-Options
 
@@ -71,8 +71,8 @@ LINALG_LIBS="-L$PREFIX/lib -lopenblas -lpthread"
 --enable-mpi=no \
 --with-linalg-flavor=none \
 --with-fft-flavor=none \
---with-trio-flavor=netcdf-fallback \
---with-dft-flavor=libxc-fallback
+--with-trio-flavor=netcdf \
+--with-dft-flavor=libxc
 #--with-fft-flavor="${FFT_FLAVOR} --with-fft-incs="${FFT_INCS}" --with-fft-libs="${FFT_LIBS}" \
 #--with-linalg-flavor=${LINALG_FLAVOR} --with-linalg-libs="${LINALG_LIBS}" \
       

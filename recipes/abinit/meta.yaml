@@ -24,7 +24,7 @@ requirements:
     #- openblas
 
   run:
-    - gcc  
+    #- gcc  
     - libgcc 
     - libgfortran 
     #- fftw
